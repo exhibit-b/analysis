@@ -112,7 +112,7 @@ ten_shortest_lived <- enriched |>
   head(10)
 ```
 
-###### Top 10 Shortest Lived Presidents”
+###### Top 10 Shortest Lived Presidents
 
 | president          | birth_date | birth_place           | death_date | death_place          | year_of_birth | lived_years | lived_months | lived_days |
 |:-------------------|:-----------|:----------------------|:-----------|:---------------------|--------------:|------------:|-------------:|-----------:|
@@ -154,8 +154,6 @@ summary_statistics <- tibble(#keep significant figures equal to lived_days under
 |------:|-------:|:-----|------:|------:|-------------------:|
 | 26364 |  26227 | None | 35426 | 16978 |               4564 |
 
-###### Distribution Plots
-
 Use the lived days for all presidents to create empirical density and
 cumulative distribution plots to further describe the distribution.
 
@@ -190,3 +188,8 @@ Libretexts. (2022, May 22). 13.1: Basic statistics- mean, median,
 average, standard deviation, Z-scores, and P-value. Engineering
 LibreTexts. Retrieved November 26, 2022, from
 <https://eng.libretexts.org/Bookshelves/Industrial_and_Systems_Engineering/Book%3A_Chemical_Process_Dynamics_and_Controls_(Woolf)/13%3A_Statistics_and_Probability_Background/13.01%3A_Basic_statistics-_mean%2C_median%2C_average%2C_standard_deviation%2C_z-scores%2C_and_p-value>
+
+caption = “Presidential Lived Days Summary Statistics”))###### caption =
+“Top 10 Shortest Lived Presidents”))###### caption = “Top 10 Longest
+Lived Presidents”)###### ) \###### Presidential Lived Days Summary
+StatisticsDistribution Plots
