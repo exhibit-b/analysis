@@ -1,0 +1,140 @@
+---
+title: "United States Presidents Birth and Death Information Dataset"
+author: "B.H."
+date: "2022-11-26"
+output: github_document
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.path = "plots/")
+```
+
+This report details the findings of an exploratory analysis of a presidential dataset using the R programming language and supporting packages. From this dataset, the top ten longest lived and shortest lived presidents were found. Then, the mean, median, mode, maximum, minimum, and standard deviation were calculated using the lifespan in days of each president. Finally, each president's lifespan was placed on a plot to illustrate the distribution.
+
+## Exploratory Analysis
+For this analysis, the following packages will be loaded:
+```{r message = FALSE, warning = FALSE}
+library(dplyr)
+library(lubridate)
+library(modeest)
+library(ggplot2)
+library(fitdistrplus)
+```
+
+Raw data is read into a dataframe for further processing.
+```{r}
+raw <- read.csv("data/U.S. Presidents Birth and Death Information - Sheet1.csv")
+```
+
+The reference information is saved, and the raw data is cleaned.
+```{r}
+reference_info <- raw$PRESIDENT[46]
+
+cleaned <- raw |>
+  #remove the 46th row which is reference information
+  head(45) |>
+  transmute(#unify naming conventions
+            president = PRESIDENT,
+            #convert chr BIRTH.DATE to Date type
+            birth_date = mdy(BIRTH.DATE),
+            birth_place = BIRTH.PLACE,
+            death_date = mdy(DEATH.DATE),
+            #ifelse ensures NA is placed in living president rows
+            death_place = ifelse((LOCATION.OF.DEATH == ""), NA, LOCATION.OF.DEATH))
+
+#free raw memory
+rm(raw)
+```
+
+Cleaned data is enriched with the new columns year_of_birth, lived_years, lived_months, and lived_days.
+```{r}
+#parse the date that the dataset was accessed to use for calculations
+accessed_date <- reference_info |> mdy()
+enriched <- cleaned |>
+  #use birth_date and death_date to create year_of_birth, lived_years, lived_months, and lived_days columns
+  mutate(year_of_birth = year(birth_date), 
+         #if there isn't a death_date, use the accessed date for calculation completion
+         lived_years = interval(birth_date, coalesce(death_date, accessed_date)) / years(1),
+         lived_months = interval(birth_date, coalesce(death_date, accessed_date)) / months(1),
+         lived_days = interval(birth_date, coalesce(death_date, accessed_date)) / days(1))
+
+rm(cleaned)
+```
+
+The enriched data is used to create a top ten longest lived presidents table.
+```{r}
+ten_longest_lived <- enriched |>
+  arrange(desc(lived_days)) |>
+  mutate(#round lived_years to 1 decimal point for presentation
+         lived_years = round(lived_years, 1),
+         #round lived_months to 3 or 4 significant figures to roughly match lived_years
+         lived_months = round(lived_months, 0),
+         #round lived_days to 4 significant figures to avoid the appearance of false equality
+         lived_days = round(lived_days, -1)) |>
+  head(10)
+```
+
+```{r echo = FALSE}
+knitr::kable(ten_longest_lived,
+caption = "Top 10 Longest Lived Presidents")
+```
+
+The enriched data is also used to create a top ten shortest lived presidents table.
+```{r}
+ten_shortest_lived <- enriched |>
+  arrange(lived_days) |>
+  mutate(#round lived_years to 1 decimal point for presentation
+         lived_years = round(lived_years, 1),
+         #round lived_months to 3 significant figures to match lived_years
+         lived_months = round(lived_months, 0),
+         #round lived_days to 4 significant figures to match the first table
+         lived_days = round(lived_days, -1)) |>
+  head(10)
+```
+
+```{r echo = FALSE}
+knitr::kable(ten_shortest_lived,
+caption = "Top 10 Shortest Lived Presidents")
+```
+
+Using the lived_days column from enriched data, create a summary statistics table.
+```{r}
+#precalculate the mode vector to simplify mode code below
+mode_vector = mfv(enriched$lived_days)
+summary_statistics <- tibble(#keep significant figures equal to lived_days underlying data
+                             mean = round(mean(enriched$lived_days), 0),
+                             #weighted mean is not used because the error associated with each measurement is unknown
+                             median = median(enriched$lived_days),
+                             #for table presentation, set mode to None when the mode returned is all of the lived_days
+                             mode = if(all(sort(mode_vector) == sort(enriched$lived_days)))
+                                      "None"
+                                    else
+                                      mode_vector,
+                             max = max(enriched$lived_days),
+                             min = min(enriched$lived_days),
+                             #match number of significant figures to above results
+                             standard_deviation = round(sd(enriched$lived_days), 1))
+```
+
+```{r echo = FALSE}
+knitr::kable(summary_statistics,
+caption = "Presidential Lived Days Summary Statistics")
+```
+
+Use the lived days for all presidents to create empirical density and cumulative distribution plots to further describe the distribution.
+```{r distribution}
+enriched$lived_days |>
+  #superimpose the density plot on the histogram
+  plotdist(histo = TRUE, demp = TRUE)
+```
+
+## Conclusion
+According to the data derived from PresidentsUSA.net, the average president lives around `r format(round(summary_statistics$mean, -2), scientific = FALSE, big.mark = ",")` days with a standard deviation of about `r format(round(summary_statistics$standard_deviation, -1), scientific = FALSE, big.mark = ",")` days.
+So far, no United States presidents have ended up with equal lifespans in whole days, and `r format(round(summary_statistics$median, -2), scientific = FALSE, big.mark = ",")` days approximates the midpoint of all presidential lifespans.
+Outlier President `r ten_longest_lived$president[1]` `r if(ten_longest_lived$death_date[1] |> is.na()) "continues to add to" else "holds"` the top presidential lifespan of approximately `r format(round(summary_statistics$max, -2), scientific = FALSE, big.mark = ",")` days, and outlier President `r ten_shortest_lived$president[1]` remains the shortest lived president in history at around `r format(round(summary_statistics$min, -2), scientific = FALSE, big.mark = ",")` days.
+
+## References
+`r reference_info %>% sub("Reference:\n", "", .)`  
+Statistics Explained. (n.d.). eurostat. Retrieved November 27, 2022, from https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Tutorial%3ARounding_of_numbers#Tables  
+Libretexts. (2022, May 22). 13.1: Basic statistics- mean, median, average, standard deviation, Z-scores, and P-value. Engineering LibreTexts. Retrieved November 26, 2022, from https://eng.libretexts.org/Bookshelves/Industrial_and_Systems_Engineering/Book%3A_Chemical_Process_Dynamics_and_Controls_(Woolf)/13%3A_Statistics_and_Probability_Background/13.01%3A_Basic_statistics-_mean%2C_median%2C_average%2C_standard_deviation%2C_z-scores%2C_and_p-value 
