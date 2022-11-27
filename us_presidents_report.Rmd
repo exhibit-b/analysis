@@ -75,9 +75,9 @@ ten_longest_lived <- enriched |>
   head(10)
 ```
 
+###### Top 10 Longest Lived Presidents
 ```{r echo = FALSE}
-knitr::kable(ten_longest_lived,
-caption = "Top 10 Longest Lived Presidents")
+knitr::kable(ten_longest_lived)
 ```
 
 The enriched data is also used to create a top ten shortest lived presidents table.
@@ -93,9 +93,9 @@ ten_shortest_lived <- enriched |>
   head(10)
 ```
 
+###### Top 10 Shortest Lived Presidents"
 ```{r echo = FALSE}
-knitr::kable(ten_shortest_lived,
-caption = "Top 10 Shortest Lived Presidents")
+knitr::kable(ten_shortest_lived)
 ```
 
 Using the lived_days column from enriched data, create a summary statistics table.
@@ -117,11 +117,13 @@ summary_statistics <- tibble(#keep significant figures equal to lived_days under
                              standard_deviation = round(sd(enriched$lived_days), 1))
 ```
 
+
+###### Presidential Lived Days Summary Statistics
 ```{r echo = FALSE}
-knitr::kable(summary_statistics,
-caption = "Presidential Lived Days Summary Statistics")
+knitr::kable(summary_statistics)
 ```
 
+###### Distribution Plots
 Use the lived days for all presidents to create empirical density and cumulative distribution plots to further describe the distribution.
 ```{r distribution}
 enriched$lived_days |>

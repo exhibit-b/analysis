@@ -82,6 +82,8 @@ ten_longest_lived <- enriched |>
   head(10)
 ```
 
+###### Top 10 Longest Lived Presidents
+
 | president        | birth_date | birth_place        | death_date | death_place           | year_of_birth | lived_years | lived_months | lived_days |
 |:-----------------|:-----------|:-------------------|:-----------|:----------------------|--------------:|------------:|-------------:|-----------:|
 | Jimmy Carter     | 1924-10-01 | Plains, Georgia    | NA         | NA                    |          1924 |        97.0 |         1164 |      35430 |
@@ -94,8 +96,6 @@ ten_longest_lived <- enriched |>
 | James Madison    | 1751-03-16 | Port Conway, Va.   | 1836-06-28 | Orange Co., Va.       |          1751 |        85.3 |         1023 |      31150 |
 | Thomas Jefferson | 1743-04-13 | Albemarle Co., Va. | 1826-07-04 | Albemarle Co., Va.    |          1743 |        83.2 |          999 |      30400 |
 | Richard Nixon    | 1913-01-09 | Yorba Linda, Cal.  | 1994-04-22 | New York, New York    |          1913 |        81.3 |          975 |      29690 |
-
-Top 10 Longest Lived Presidents
 
 The enriched data is also used to create a top ten shortest lived
 presidents table.
@@ -112,6 +112,8 @@ ten_shortest_lived <- enriched |>
   head(10)
 ```
 
+###### Top 10 Shortest Lived Presidents”
+
 | president          | birth_date | birth_place           | death_date | death_place          | year_of_birth | lived_years | lived_months | lived_days |
 |:-------------------|:-----------|:----------------------|:-----------|:---------------------|--------------:|------------:|-------------:|-----------:|
 | John F. Kennedy    | 1917-05-29 | Brookline, Mass.      | 1963-11-22 | Dallas, Texas        |          1917 |        46.5 |          558 |      16980 |
@@ -124,8 +126,6 @@ ten_shortest_lived <- enriched |>
 | Barack Obama       | 1961-08-04 | Honolulu, Hawaii      | NA         | NA                   |          1961 |        60.2 |          722 |      21970 |
 | Theodore Roosevelt | 1858-10-27 | New York, New York    | 1919-01-06 | Oyster Bay, New York |          1858 |        60.2 |          722 |      21980 |
 | Calvin Coolidge    | 1872-07-04 | Plymouth, Vermont     | 1933-01-05 | Northampton, Mass.   |          1872 |        60.5 |          726 |      22100 |
-
-Top 10 Shortest Lived Presidents
 
 Using the lived_days column from enriched data, create a summary
 statistics table.
@@ -148,11 +148,13 @@ summary_statistics <- tibble(#keep significant figures equal to lived_days under
                              standard_deviation = round(sd(enriched$lived_days), 1))
 ```
 
+###### Presidential Lived Days Summary Statistics
+
 |  mean | median | mode |   max |   min | standard_deviation |
 |------:|-------:|:-----|------:|------:|-------------------:|
 | 26364 |  26227 | None | 35426 | 16978 |               4564 |
 
-Presidential Lived Days Summary Statistics
+###### Distribution Plots
 
 Use the lived days for all presidents to create empirical density and
 cumulative distribution plots to further describe the distribution.
