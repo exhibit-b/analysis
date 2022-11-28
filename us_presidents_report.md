@@ -1,6 +1,6 @@
 United States Presidents Birth and Death Information Dataset
 ================
-B.H.
+B. Henderson
 2022-11-26
 
 This report details the findings of an exploratory analysis of a
@@ -58,7 +58,7 @@ lived_years, lived_months, and lived_days.
 accessed_date <- reference_info |> mdy()
 enriched <- cleaned |>
   #use birth_date and death_date to create year_of_birth, lived_years, lived_months, and lived_days columns
-  mutate(year_of_birth = year(birth_date), 
+  mutate(year_of_birth = year(birth_date),
          #if there isn't a death_date, use the accessed date for calculation completion
          lived_years = interval(birth_date, coalesce(death_date, accessed_date)) / years(1),
          lived_months = interval(birth_date, coalesce(death_date, accessed_date)) / months(1),
